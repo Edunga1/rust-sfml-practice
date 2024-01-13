@@ -1,0 +1,6 @@
+[env]
+SFML_INCLUDE_DIR = "/home/linuxbrew/.linuxbrew/Cellar/sfml/2.6.1/include"
+SFML_LIBS_DIR = "/home/linuxbrew/.linuxbrew/Cellar/sfml/2.6.1/lib"
+#SFML_INCLUDE_DIR = "/home/linuxbrew/.linuxbrew/Cellar/csfml/2.5.2_1/include"
+#SFML_LIBS_DIR = "/home/linuxbrew/.linuxbrew/Cellar/csfml/2.5.2_1/lib"
+#CSFML_HOME = "/home/linuxbrew/.linuxbrew/Cellar/csfml/2.5.2_1/lib"
