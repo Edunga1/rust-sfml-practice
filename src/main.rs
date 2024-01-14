@@ -1,24 +1,15 @@
 use sfml::{
-    graphics::{Color, CustomShape, CustomShapePoints, RenderTarget, RenderWindow, Shape},
-    system::Vector2f,
+    graphics::{Color, RenderTarget, RenderWindow, Shape, RectangleShape, Transformable},
     window::{Event, Key, Style},
 };
 
-#[derive(Clone, Copy)]
-pub struct TriangleShape;
-
-impl CustomShapePoints for TriangleShape {
-    fn point_count(&self) -> usize {
-        3
-    }
-
-    fn point(&self, point: usize) -> Vector2f {
-        match point {
-            0 => Vector2f { x: 20., y: 580. },
-            1 => Vector2f { x: 400., y: 20. },
-            2 => Vector2f { x: 780., y: 580. },
-            p => panic!("Non-existent point: {p}"),
-        }
+fn move_shape(shape: &mut RectangleShape, event: Event) {
+    match event {
+        Event::KeyPressed { code: Key::Left, .. } => { shape.set_position((shape.position().x - 10., shape.position().y)); }
+        Event::KeyPressed { code: Key::Right, .. } => { shape.set_position((shape.position().x + 10., shape.position().y)); }
+        Event::KeyPressed { code: Key::Up, .. } => { shape.set_position((shape.position().x, shape.position().y - 10.)); }
+        Event::KeyPressed { code: Key::Down, .. } => { shape.set_position((shape.position().x, shape.position().y + 10.)); }
+        _ => {}
     }
 }
 
@@ -31,7 +22,9 @@ fn main() {
     );
     window.set_vertical_sync_enabled(true);
 
-    let mut shape = CustomShape::new(Box::new(TriangleShape));
+    let mut shape = RectangleShape::new();
+    shape.set_size((100., 100.));
+    shape.set_position((200., 200.));
     shape.set_fill_color(Color::RED);
     shape.set_outline_color(Color::GREEN);
     shape.set_outline_thickness(3.);
@@ -39,10 +32,11 @@ fn main() {
     loop {
         while let Some(event) = window.poll_event() {
             match event {
-                Event::Closed
-                | Event::KeyPressed {
-                    code: Key::Escape, ..
-                } => return,
+                Event::Closed | Event::KeyPressed { code: Key::Escape, .. } => return,
+                Event::KeyPressed { code: Key::Left, .. }
+                | Event::KeyPressed { code: Key::Right, .. }
+                | Event::KeyPressed { code: Key::Up, .. }
+                | Event::KeyPressed { code: Key::Down, .. } => move_shape(&mut shape, event),
                 _ => {}
             }
         }
