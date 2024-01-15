@@ -1,20 +1,29 @@
 use sfml::{
     graphics::{Color, RenderTarget, RenderWindow, Shape, RectangleShape, Transformable},
-    window::{Event, Key, Style},
+    window::{Event, Key, Style}, system::Vector2f,
 };
 
-fn move_shape(shape: &mut RectangleShape, event: Event) {
-    match event {
-        Event::KeyPressed { code: Key::Left, .. } => { shape.set_position((shape.position().x - 10., shape.position().y)); }
-        Event::KeyPressed { code: Key::Right, .. } => { shape.set_position((shape.position().x + 10., shape.position().y)); }
-        Event::KeyPressed { code: Key::Up, .. } => { shape.set_position((shape.position().x, shape.position().y - 10.)); }
-        Event::KeyPressed { code: Key::Down, .. } => { shape.set_position((shape.position().x, shape.position().y + 10.)); }
-        _ => {}
-    }
+trait Moveable {
+    fn move_shape(&mut self, vector: Vector2f);
 }
 
 struct Nemo<'a> {
     rect: RectangleShape<'a>,
+    boundary: Option<(f32, f32)>,
+}
+
+impl Moveable for Nemo<'_> {
+    fn move_shape(&mut self, vector: Vector2f) {
+        if self.boundary.is_none() {
+            self.rect.move_(vector);
+            return;
+        }
+
+        let (x, y) = (self.rect.position().x + vector.x, self.rect.position().y + vector.y);
+        let (x, y) = (x.max(0.), y.max(0.));
+        let (x, y) = (x.min(self.boundary.unwrap().0), y.min(self.boundary.unwrap().1));
+        self.rect.set_position((x, y));
+    }
 }
 
 impl Nemo<'_> {
@@ -25,7 +34,22 @@ impl Nemo<'_> {
         rect.set_fill_color(Color::RED);
         rect.set_outline_color(Color::GREEN);
         rect.set_outline_thickness(3.);
-        Nemo { rect }
+        Nemo {
+            rect,
+            boundary: None,
+        }
+    }
+
+    fn set_boundary(&mut self, boundary: (f32, f32), aware_size: bool) {
+        self.boundary = Some(
+            if aware_size {
+                let size = self.rect.size();
+                let (x, y) = (boundary.0 - size.x, boundary.1 - size.y);
+                (x, y)
+            } else {
+                boundary
+            }
+        );
     }
 }
 
@@ -39,15 +63,16 @@ fn main() {
     window.set_vertical_sync_enabled(true);
 
     let mut nemo = Nemo::new();
+    nemo.set_boundary((800., 600.), true);
 
     loop {
         while let Some(event) = window.poll_event() {
             match event {
                 Event::Closed | Event::KeyPressed { code: Key::Escape, .. } => return,
-                Event::KeyPressed { code: Key::Left, .. }
-                | Event::KeyPressed { code: Key::Right, .. }
-                | Event::KeyPressed { code: Key::Up, .. }
-                | Event::KeyPressed { code: Key::Down, .. } => move_shape(&mut nemo.rect, event),
+                Event::KeyPressed { code: Key::Left, .. } => nemo.move_shape((-10., 0.).into()),
+                Event::KeyPressed { code: Key::Right, .. } => nemo.move_shape((10., 0.).into()),
+                Event::KeyPressed { code: Key::Up, .. } => nemo.move_shape((0., -10.).into()),
+                Event::KeyPressed { code: Key::Down, .. } => nemo.move_shape((0., 10.).into()),
                 _ => {}
             }
         }
