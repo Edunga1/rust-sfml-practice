@@ -13,6 +13,22 @@ fn move_shape(shape: &mut RectangleShape, event: Event) {
     }
 }
 
+struct Nemo<'a> {
+    rect: RectangleShape<'a>,
+}
+
+impl Nemo<'_> {
+    fn new() -> Nemo<'static> {
+        let mut rect = RectangleShape::new();
+        rect.set_size((100., 100.));
+        rect.set_position((200., 200.));
+        rect.set_fill_color(Color::RED);
+        rect.set_outline_color(Color::GREEN);
+        rect.set_outline_thickness(3.);
+        Nemo { rect }
+    }
+}
+
 fn main() {
     let mut window = RenderWindow::new(
         (800, 600),
@@ -22,12 +38,7 @@ fn main() {
     );
     window.set_vertical_sync_enabled(true);
 
-    let mut shape = RectangleShape::new();
-    shape.set_size((100., 100.));
-    shape.set_position((200., 200.));
-    shape.set_fill_color(Color::RED);
-    shape.set_outline_color(Color::GREEN);
-    shape.set_outline_thickness(3.);
+    let mut nemo = Nemo::new();
 
     loop {
         while let Some(event) = window.poll_event() {
@@ -36,13 +47,13 @@ fn main() {
                 Event::KeyPressed { code: Key::Left, .. }
                 | Event::KeyPressed { code: Key::Right, .. }
                 | Event::KeyPressed { code: Key::Up, .. }
-                | Event::KeyPressed { code: Key::Down, .. } => move_shape(&mut shape, event),
+                | Event::KeyPressed { code: Key::Down, .. } => move_shape(&mut nemo.rect, event),
                 _ => {}
             }
         }
 
         window.clear(Color::BLACK);
-        window.draw(&shape);
+        window.draw(&nemo.rect);
         window.display();
     }
 }
