@@ -5,7 +5,6 @@ use sfml::{
 };
 
 mod ui;
-mod shape;
 mod game;
 
 fn main() {

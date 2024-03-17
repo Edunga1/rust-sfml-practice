@@ -1,6 +1,6 @@
 use sfml::system::Vector2f;
 
-use crate::shape::nemo::{Nemo, Moveable};
+use super::unit::unit::{Unit, Moveable};
 
 pub trait GameEvent {
     fn move_left(&mut self);
@@ -11,7 +11,7 @@ pub trait GameEvent {
 }
 
 pub struct Game<'a> {
-    pub playable: Nemo<'a>,
+    pub playable: Unit<'a>,
     playable_direction: Vector2f,
 }
 
@@ -41,7 +41,7 @@ impl Game<'_> {
     const SPEED: f32 = 0.5;
 
     pub fn new() -> Game<'static> {
-        let mut nemo = Nemo::new();
+        let mut nemo = Unit::new();
         nemo.set_boundary((800., 600.), true);
         Game {
             playable: nemo,

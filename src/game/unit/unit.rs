@@ -4,12 +4,12 @@ pub trait Moveable {
    fn move_shape(&mut self, vector: Vector2f);
 }
 
-pub struct Nemo<'a> {
+pub struct Unit<'a> {
     pub rect: RectangleShape<'a>,
     boundary: Option<(f32, f32)>,
 }
 
-impl Moveable for Nemo<'_> {
+impl Moveable for Unit<'_> {
     fn move_shape(&mut self, vector: Vector2f) {
         if self.boundary.is_none() {
             self.rect.move_(vector);
@@ -23,15 +23,15 @@ impl Moveable for Nemo<'_> {
     }
 }
 
-impl Nemo<'_> {
-    pub fn new() -> Nemo<'static> {
+impl Unit<'_> {
+    pub fn new() -> Unit<'static> {
         let mut rect = RectangleShape::new();
         rect.set_size((100., 100.));
         rect.set_position((200., 200.));
         rect.set_fill_color(Color::RED);
         rect.set_outline_color(Color::GREEN);
         rect.set_outline_thickness(3.);
-        Nemo {
+        Unit {
             rect,
             boundary: None,
         }
