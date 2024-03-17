@@ -1,8 +1,0 @@
-version: '3'
-
-services:
-  sfml:
-    build: .
-    volumes:
-      - ./target/:/usr/src/app/target
-    command: ["cargo", "build", "--release"]

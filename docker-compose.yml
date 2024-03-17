@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  sfml:
+    build: .
+    user: "1000:1000"
+    volumes:
+      - .:/usr/src/app:rw
+    command: ["cargo", "build"]
