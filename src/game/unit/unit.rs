@@ -1,7 +1,16 @@
+use std::ops::Mul;
+
 use sfml::{graphics::{Color, RectangleShape, Shape, Transformable}, system::Vector2f};
 
+pub enum Direction {
+    Left,
+    Right,
+    Up,
+    Down,
+}
+
 pub trait Moveable {
-   fn move_shape(&mut self, vector: Vector2f);
+   fn move_shape(&mut self, direction: Direction);
 }
 
 pub struct Unit<'a> {
@@ -10,7 +19,8 @@ pub struct Unit<'a> {
 }
 
 impl Moveable for Unit<'_> {
-    fn move_shape(&mut self, vector: Vector2f) {
+    fn move_shape(&mut self, direction: Direction) {
+        let vector = Unit::direction_to_vector(direction).mul(5.);
         if self.boundary.is_none() {
             self.rect.move_(vector);
             return;
@@ -47,6 +57,15 @@ impl Unit<'_> {
                 boundary
             }
         );
+    }
+
+    fn direction_to_vector(direction: Direction) -> Vector2f {
+        match direction {
+            Direction::Left => (-1., 0.).into(),
+            Direction::Right => (1., 0.).into(),
+            Direction::Up => (0., -1.).into(),
+            Direction::Down => (0., 1.).into(),
+        }
     }
 }
 
