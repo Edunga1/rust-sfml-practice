@@ -10,7 +10,7 @@ pub enum Direction {
 }
 
 pub trait Moveable {
-   fn move_shape(&mut self, direction: Direction);
+   fn move_shape(&mut self, direction: &Direction);
 }
 
 pub struct Unit<'a> {
@@ -19,7 +19,7 @@ pub struct Unit<'a> {
 }
 
 impl Moveable for Unit<'_> {
-    fn move_shape(&mut self, direction: Direction) {
+    fn move_shape(&mut self, direction: &Direction) {
         let vector = Unit::direction_to_vector(direction).mul(5.);
         if self.boundary.is_none() {
             self.rect.move_(vector);
@@ -59,7 +59,7 @@ impl Unit<'_> {
         );
     }
 
-    fn direction_to_vector(direction: Direction) -> Vector2f {
+    fn direction_to_vector(direction: &Direction) -> Vector2f {
         match direction {
             Direction::Left => (-1., 0.).into(),
             Direction::Right => (1., 0.).into(),

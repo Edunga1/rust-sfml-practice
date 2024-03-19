@@ -50,11 +50,10 @@ impl Game<'_> {
     }
 
     fn move_playable(&mut self) {
-        if self.playable_direction.is_none() {
+        if let Some(ref direction) = self.playable_direction {
+            self.playable.move_shape(direction);
+        } else {
             return;
         }
-
-        let direction = self.playable_direction.take().unwrap();
-        self.playable.move_shape(direction);
     }
 }
