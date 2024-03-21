@@ -16,10 +16,16 @@ pub trait Moveable {
 pub struct Unit<'a> {
     pub rect: RectangleShape<'a>,
     boundary: Option<(f32, f32)>,
+    move_cooldown: i32,
+    move_current_cooldown: i32,
 }
 
 impl Moveable for Unit<'_> {
     fn move_shape(&mut self, direction: &Direction) {
+        if self.move_current_cooldown > 0 {
+            return;
+        }
+
         let vector = Unit::direction_to_vector(direction).mul(5.);
         if self.boundary.is_none() {
             self.rect.move_(vector);
@@ -30,6 +36,8 @@ impl Moveable for Unit<'_> {
         let (x, y) = (x.max(0.), y.max(0.));
         let (x, y) = (x.min(self.boundary.unwrap().0), y.min(self.boundary.unwrap().1));
         self.rect.set_position((x, y));
+
+        self.move_current_cooldown = self.move_cooldown;
     }
 }
 
@@ -41,9 +49,18 @@ impl Unit<'_> {
         rect.set_fill_color(Color::RED);
         rect.set_outline_color(Color::GREEN);
         rect.set_outline_thickness(3.);
+
         Unit {
             rect,
             boundary: None,
+            move_cooldown: 30,
+            move_current_cooldown: 0,
+        }
+    }
+
+    pub fn tick(&mut self) {
+        if self.move_current_cooldown > 0 {
+            self.move_current_cooldown -= 1;
         }
     }
 

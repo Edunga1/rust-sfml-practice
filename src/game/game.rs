@@ -47,6 +47,7 @@ impl Game<'_> {
 
     pub fn tick(&mut self) {
         self.move_playable();
+        self.playable.tick();
     }
 
     fn move_playable(&mut self) {
