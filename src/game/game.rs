@@ -8,12 +8,12 @@ pub trait GameEvent {
     fn stop(&mut self);
 }
 
-pub struct Game<'a> {
-    pub playable: Unit<'a>,
+pub struct Game {
+    pub playable: Unit,
     playable_direction: Option<Direction>,
 }
 
-impl GameEvent for Game<'_> {
+impl GameEvent for Game {
     fn move_left(&mut self) {
         self.playable_direction = Option::Some(Direction::Left);
     }
@@ -35,10 +35,10 @@ impl GameEvent for Game<'_> {
     }
 }
 
-impl Game<'_> {
-    pub fn new() -> Game<'static> {
+impl Game {
+    pub fn new() -> Game {
         let mut nemo = Unit::new();
-        nemo.set_boundary((800., 600.), true);
+        nemo.set_boundary((800, 600), true);
         Game {
             playable: nemo,
             playable_direction: Option::None,

@@ -1,8 +1,6 @@
-use std::ops::Mul;
-
-use sfml::{graphics::{Color, RectangleShape, Shape, Transformable}, system::Vector2f};
-
 use crate::game::tick::counter::TickCounter;
+
+use super::{position::Position, vector::Vector2d};
 
 pub enum Direction {
     Left,
@@ -12,45 +10,43 @@ pub enum Direction {
 }
 
 pub trait Moveable {
-   fn move_shape(&mut self, direction: &Direction);
+    fn move_shape(&mut self, direction: &Direction);
 }
 
-pub struct Unit<'a> {
-    pub rect: RectangleShape<'a>,
-    boundary: Option<(f32, f32)>,
+pub struct Unit {
+    pub pos: Position,
+    pub size: i32,
+    boundary: Option<(i32, i32)>,
     movement_counter: TickCounter,
 }
 
-impl Moveable for Unit<'_> {
+impl Moveable for Unit {
     fn move_shape(&mut self, direction: &Direction) {
         if !self.movement_counter.reset() {
             return;
         }
 
-        let vector = Unit::direction_to_vector(direction).mul(5.);
+        let vector = Unit::direction_to_vector(direction).mul(5);
         if self.boundary.is_none() {
-            self.rect.move_(vector);
+            self.pos.move_(vector);
             return;
         }
 
-        let (x, y) = (self.rect.position().x + vector.x, self.rect.position().y + vector.y);
-        let (x, y) = (x.max(0.), y.max(0.));
-        let (x, y) = (x.min(self.boundary.unwrap().0), y.min(self.boundary.unwrap().1));
-        self.rect.set_position((x, y));
+        let (x, y) = self.pos.vector.clone().add(vector).into();
+        let (x, y) = (x.max(0), y.max(0));
+        let (x, y) = (
+            x.min(self.boundary.unwrap().0),
+            y.min(self.boundary.unwrap().1),
+        );
+        self.pos = Position::new(x, y);
     }
 }
 
-impl Unit<'_> {
-    pub fn new() -> Unit<'static> {
-        let mut rect = RectangleShape::new();
-        rect.set_size((100., 100.));
-        rect.set_position((200., 200.));
-        rect.set_fill_color(Color::RED);
-        rect.set_outline_color(Color::GREEN);
-        rect.set_outline_thickness(3.);
-
+impl Unit {
+    pub fn new() -> Unit {
         Unit {
-            rect,
+            pos: Position::new(200, 200),
+            size: 100,
             boundary: None,
             movement_counter: TickCounter::new(30),
         }
@@ -60,25 +56,21 @@ impl Unit<'_> {
         self.movement_counter.tick();
     }
 
-    pub fn set_boundary(&mut self, boundary: (f32, f32), aware_size: bool) {
-        self.boundary = Some(
-            if aware_size {
-                let size = self.rect.size();
-                let (x, y) = (boundary.0 - size.x, boundary.1 - size.y);
-                (x, y)
-            } else {
-                boundary
-            }
-        );
+    pub fn set_boundary(&mut self, boundary: (i32, i32), aware_size: bool) {
+        self.boundary = Some(if aware_size {
+            let (x, y) = (boundary.0 - self.size, boundary.1 - self.size);
+            (x, y)
+        } else {
+            boundary
+        });
     }
 
-    fn direction_to_vector(direction: &Direction) -> Vector2f {
+    fn direction_to_vector(direction: &Direction) -> Vector2d {
         match direction {
-            Direction::Left => (-1., 0.).into(),
-            Direction::Right => (1., 0.).into(),
-            Direction::Up => (0., -1.).into(),
-            Direction::Down => (0., 1.).into(),
+            Direction::Left => (-1, 0).into(),
+            Direction::Right => (1, 0).into(),
+            Direction::Up => (0, -1).into(),
+            Direction::Down => (0, 1).into(),
         }
     }
 }
-

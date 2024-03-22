@@ -1,6 +1,6 @@
 use game::game::GameEvent;
 use sfml::{
-    graphics::{Color, RenderTarget},
+    graphics::{Color, RenderTarget, RectangleShape, Shape, Transformable},
     window::{Event, Key},
 };
 
@@ -27,9 +27,18 @@ fn main() {
             }
         }
 
+        let mut player_rect = RectangleShape::with_size(
+            (game.playable.size as f32, game.playable.size as f32).into()
+        );
+        let pos: (i32, i32) = game.playable.pos.clone().into();
+        player_rect.set_fill_color(Color::RED);
+        player_rect.set_outline_color(Color::GREEN);
+        player_rect.set_outline_thickness(3.);
+        player_rect.set_position((pos.0 as f32, pos.1 as f32));
+
         game.tick();
         window.clear(Color::BLACK);
-        window.draw(&game.playable.rect);
+        window.draw(&player_rect);
         window.display();
     }
 }
