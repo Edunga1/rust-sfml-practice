@@ -2,6 +2,8 @@ use std::ops::Mul;
 
 use sfml::{graphics::{Color, RectangleShape, Shape, Transformable}, system::Vector2f};
 
+use crate::game::tick::counter::TickCounter;
+
 pub enum Direction {
     Left,
     Right,
@@ -16,13 +18,12 @@ pub trait Moveable {
 pub struct Unit<'a> {
     pub rect: RectangleShape<'a>,
     boundary: Option<(f32, f32)>,
-    move_cooldown: i32,
-    move_current_cooldown: i32,
+    movement_counter: TickCounter,
 }
 
 impl Moveable for Unit<'_> {
     fn move_shape(&mut self, direction: &Direction) {
-        if self.move_current_cooldown > 0 {
+        if !self.movement_counter.reset() {
             return;
         }
 
@@ -36,8 +37,6 @@ impl Moveable for Unit<'_> {
         let (x, y) = (x.max(0.), y.max(0.));
         let (x, y) = (x.min(self.boundary.unwrap().0), y.min(self.boundary.unwrap().1));
         self.rect.set_position((x, y));
-
-        self.move_current_cooldown = self.move_cooldown;
     }
 }
 
@@ -53,15 +52,12 @@ impl Unit<'_> {
         Unit {
             rect,
             boundary: None,
-            move_cooldown: 30,
-            move_current_cooldown: 0,
+            movement_counter: TickCounter::new(30),
         }
     }
 
     pub fn tick(&mut self) {
-        if self.move_current_cooldown > 0 {
-            self.move_current_cooldown -= 1;
-        }
+        self.movement_counter.tick();
     }
 
     pub fn set_boundary(&mut self, boundary: (f32, f32), aware_size: bool) {
