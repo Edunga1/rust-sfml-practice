@@ -1,4 +1,4 @@
-use crate::game::tick::counter::TickCounter;
+use crate::tick::counter::TickCounter;
 
 use super::{position::Position, vector::Vector2d};
 

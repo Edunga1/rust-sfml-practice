@@ -5,7 +5,6 @@ use sfml::{
 };
 
 mod ui;
-mod game;
 
 fn main() {
     let mut window = ui::window::create_window();

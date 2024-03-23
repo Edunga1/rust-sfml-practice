@@ -24,6 +24,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "game"
+version = "0.1.0"
+
+[[package]]
 name = "libc"
 version = "0.2.149"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -71,6 +75,7 @@ dependencies = [
 name = "sfml-rust-start"
 version = "0.1.0"
 dependencies = [
+ "game",
  "sfml",
 ]
 
