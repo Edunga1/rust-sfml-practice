@@ -26,7 +26,7 @@ impl Default for Unit {
             pos: Position::new(0, 0),
             body: 1,
             boundary: None,
-            movement_counter: TickCounter::new(30),
+            movement_counter: TickCounter::new(100),
         }
     }
 }
