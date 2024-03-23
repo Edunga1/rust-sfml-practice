@@ -52,7 +52,7 @@ impl Game {
 
     fn move_playable(&mut self) {
         if let Some(ref direction) = self.playable_direction {
-            self.playable.move_shape(direction);
+            self.playable.move_(direction);
         } else {
             return;
         }

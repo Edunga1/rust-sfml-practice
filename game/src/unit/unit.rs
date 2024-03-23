@@ -10,7 +10,7 @@ pub enum Direction {
 }
 
 pub trait Moveable {
-    fn move_shape(&mut self, direction: &Direction);
+    fn move_(&mut self, direction: &Direction);
 }
 
 pub struct Unit {
@@ -21,7 +21,7 @@ pub struct Unit {
 }
 
 impl Moveable for Unit {
-    fn move_shape(&mut self, direction: &Direction) {
+    fn move_(&mut self, direction: &Direction) {
         if !self.movement_counter.reset() {
             return;
         }
