@@ -16,8 +16,21 @@ pub trait Moveable {
 pub struct Unit {
     pub pos: Position,
     pub size: i32,
+    pub body: u32,
     boundary: Option<(i32, i32)>,
     movement_counter: TickCounter,
+}
+
+impl Default for Unit {
+    fn default() -> Self {
+        Self {
+            pos: Position::new(200, 200),
+            size: 100,
+            body: 1,
+            boundary: None,
+            movement_counter: TickCounter::new(30),
+        }
+    }
 }
 
 impl Moveable for Unit {
@@ -45,10 +58,7 @@ impl Moveable for Unit {
 impl Unit {
     pub fn new() -> Unit {
         Unit {
-            pos: Position::new(200, 200),
-            size: 100,
-            boundary: None,
-            movement_counter: TickCounter::new(30),
+            ..Default::default()
         }
     }
 
