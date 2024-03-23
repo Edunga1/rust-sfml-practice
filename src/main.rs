@@ -1,6 +1,7 @@
+use crate::ui::renderer::get_drawable;
 use game::game::GameEvent;
 use sfml::{
-    graphics::{Color, RenderTarget, RectangleShape, Shape, Transformable},
+    graphics::{Color, RenderTarget},
     window::{Event, Key},
 };
 
@@ -26,18 +27,11 @@ fn main() {
             }
         }
 
-        let mut player_rect = RectangleShape::with_size(
-            (game.playable.size as f32, game.playable.size as f32).into()
-        );
-        let pos: (i32, i32) = game.playable.pos.clone().into();
-        player_rect.set_fill_color(Color::RED);
-        player_rect.set_outline_color(Color::GREEN);
-        player_rect.set_outline_thickness(3.);
-        player_rect.set_position((pos.0 as f32, pos.1 as f32));
+        let drawable = get_drawable(0, game.playable.pos.clone().into());
 
         game.tick();
         window.clear(Color::BLACK);
-        window.draw(&player_rect);
+        window.draw(&drawable);
         window.display();
     }
 }
