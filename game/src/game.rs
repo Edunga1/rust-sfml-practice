@@ -38,7 +38,7 @@ impl GameEvent for Game {
 impl Game {
     pub fn new() -> Game {
         let mut nemo = Unit::new();
-        nemo.set_boundary((800, 600), true);
+        nemo.set_boundary((200, 100));
         Game {
             playable: nemo,
             playable_direction: Option::None,

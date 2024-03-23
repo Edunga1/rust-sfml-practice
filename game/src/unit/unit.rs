@@ -15,7 +15,6 @@ pub trait Moveable {
 
 pub struct Unit {
     pub pos: Position,
-    pub size: i32,
     pub body: u32,
     boundary: Option<(i32, i32)>,
     movement_counter: TickCounter,
@@ -24,8 +23,7 @@ pub struct Unit {
 impl Default for Unit {
     fn default() -> Self {
         Self {
-            pos: Position::new(200, 200),
-            size: 100,
+            pos: Position::new(0, 0),
             body: 1,
             boundary: None,
             movement_counter: TickCounter::new(30),
@@ -39,18 +37,17 @@ impl Moveable for Unit {
             return;
         }
 
-        let vector = Unit::direction_to_vector(direction).mul(5);
+        let vector = Unit::direction_to_vector(direction);
         if self.boundary.is_none() {
             self.pos.move_(vector);
             return;
         }
 
-        let (x, y) = self.pos.vector.clone().add(vector).into();
-        let (x, y) = (x.max(0), y.max(0));
-        let (x, y) = (
-            x.min(self.boundary.unwrap().0),
-            y.min(self.boundary.unwrap().1),
-        );
+        let (x, y) = {
+            let (x, y) = self.pos.vector.clone().add(vector).into();
+            let (mx, my) = self.boundary.unwrap();
+            (x.clamp(0, mx), y.clamp(0, my))
+        };
         self.pos = Position::new(x, y);
     }
 }
@@ -66,13 +63,8 @@ impl Unit {
         self.movement_counter.tick();
     }
 
-    pub fn set_boundary(&mut self, boundary: (i32, i32), aware_size: bool) {
-        self.boundary = Some(if aware_size {
-            let (x, y) = (boundary.0 - self.size, boundary.1 - self.size);
-            (x, y)
-        } else {
-            boundary
-        });
+    pub fn set_boundary(&mut self, boundary: (i32, i32)) {
+        self.boundary = Some(boundary);
     }
 
     fn direction_to_vector(direction: &Direction) -> Vector2d {
