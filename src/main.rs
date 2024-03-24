@@ -27,11 +27,14 @@ fn main() {
             }
         }
 
-        let drawable = get_drawable(0, game.playable.pos.clone().into());
-
         game.tick();
         window.clear(Color::BLACK);
-        window.draw(&drawable);
+
+        for ele in game.get_all_units() {
+            let drawable = get_drawable(ele.body, ele.pos.clone().into());
+            window.draw(&drawable);
+        }
+
         window.display();
     }
 }
