@@ -4,6 +4,7 @@ use sfml::{
     graphics::{Color, RenderTarget},
     window::{Event, Key},
 };
+use ui::renderer::get_text;
 
 mod ui;
 
@@ -33,6 +34,9 @@ fn main() {
         for ele in game.get_all_units() {
             let drawable = get_drawable(ele.body, ele.pos.clone().into());
             window.draw(&drawable);
+            // not working yet. why?
+            let label = get_text(&ele.name, ele.pos.clone().into());
+            window.draw(&label);
         }
 
         window.display();

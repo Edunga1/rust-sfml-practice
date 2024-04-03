@@ -14,6 +14,7 @@ pub trait Moveable {
 }
 
 pub struct Unit {
+    pub name: String,
     pub pos: Position,
     pub body: u32,
     boundary: Option<(i32, i32)>,
@@ -23,6 +24,7 @@ pub struct Unit {
 impl Default for Unit {
     fn default() -> Self {
         Self {
+            name: String::from("noname"),
             pos: Position::new(0, 0),
             body: 1,
             boundary: None,

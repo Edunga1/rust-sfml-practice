@@ -1,3 +1,5 @@
+use crate::unit::creature::{Creature, Squirrel};
+
 use super::unit::unit::{Direction, Moveable, Unit};
 use rand::Rng;
 
@@ -12,7 +14,7 @@ pub trait GameEvent {
 pub struct Game {
     pub serial: Option<u32>, // unused yet
     pub playable: Unit,
-    units: Vec<Unit>,
+    pub creatures: Vec<Box<dyn Creature>>,
     playable_direction: Option<Direction>,
 }
 
@@ -26,7 +28,7 @@ impl Default for Game {
         Self {
             serial: Option::None,
             playable: player,
-            units: vec![],
+            creatures: vec![],
             playable_direction: Option::None,
         }
     }
@@ -61,9 +63,9 @@ impl Game {
         };
         let mut rng = rand::thread_rng();
         for _ in 0..10 {
-            let mut unit = Unit::new();
-            unit.pos.move_((rng.gen_range(0..15), rng.gen_range(0..12)).into());
-            game.add_unit(unit);
+            let mut squirrel = Squirrel::new();
+            squirrel.unit.pos.move_((rng.gen_range(0..15), rng.gen_range(0..12)).into());
+            game.creatures.push(Box::new(squirrel));
         }
         game
     }
@@ -74,8 +76,14 @@ impl Game {
     }
 
     pub fn get_all_units(&self) -> Vec<&Unit> {
-        let mut units = self.units.iter().collect::<Vec<&Unit>>();
+        let mut units = vec![];
         units.push(&self.playable);
+        let mut creatures = self
+            .creatures
+            .iter()
+            .map(|c| c.get_unit())
+            .collect::<Vec<&Unit>>();
+        units.append(&mut creatures);
         units
     }
 
@@ -85,9 +93,5 @@ impl Game {
         } else {
             return;
         }
-    }
-
-    fn add_unit(&mut self, unit: Unit) {
-        self.units.push(unit);
     }
 }
