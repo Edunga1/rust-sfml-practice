@@ -17,6 +17,7 @@ pub struct Unit {
     pub name: String,
     pub pos: Position,
     pub body: u32,
+    pub direction: Direction,
     boundary: Option<(i32, i32)>,
     movement_counter: TickCounter,
 }
@@ -27,8 +28,9 @@ impl Default for Unit {
             name: String::from("noname"),
             pos: Position::new(0, 0),
             body: 1,
+            direction: Direction::Right,
             boundary: None,
-            movement_counter: TickCounter::new(100),
+            movement_counter: TickCounter::new(10),
         }
     }
 }
@@ -51,6 +53,12 @@ impl Moveable for Unit {
             (x.clamp(0, mx), y.clamp(0, my))
         };
         self.pos = Position::new(x, y);
+
+        match direction {
+            Direction::Left => self.direction = Direction::Left,
+            Direction::Right => self.direction = Direction::Right,
+            _ => {},
+        }
     }
 }
 

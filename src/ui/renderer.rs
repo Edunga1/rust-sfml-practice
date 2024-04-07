@@ -1,17 +1,28 @@
-use game::unit::unit::Unit;
+use game::unit::unit::{Unit, Direction};
 use sfml::graphics::{Color, RectangleShape, Shape, Transformable, Texture, RenderWindow, RenderTarget};
 
+const SIZE: (f32, f32) = (50., 50.);
+
 pub fn draw_unit(window: &mut RenderWindow, unit: &Unit) {
-    let (x, y) = {
+    let (mut x, y) = {
         let (x, y) = unit.pos.clone().into();
-        (x as f32 * 50., y as f32 * 50.)
+        (x as f32 * SIZE.0, y as f32 * SIZE.1)
     };
     let texture = Texture::from_file("src/resource/char-default.png").unwrap();
-    let mut rect = RectangleShape::with_size((50., 50.).into());
+    let mut rect = RectangleShape::with_size((SIZE.0, SIZE.1).into());
+
     rect.set_texture(&texture, true);
-    rect.set_outline_thickness(3.);
+
+    match unit.direction {
+        Direction::Left => {
+            rect.set_scale((-1., 1.));
+            x += SIZE.0;
+        }
+        _ => {},
+    }
+
     rect.set_position((x, y));
-    window.draw(&rect)
+    window.draw(&rect);
 }
 
 pub fn get_text(text: &str, pos: (i32, i32)) -> sfml::graphics::Text {
