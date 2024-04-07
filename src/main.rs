@@ -1,10 +1,9 @@
-use crate::ui::renderer::get_drawable;
 use game::game::GameEvent;
 use sfml::{
     graphics::{Color, RenderTarget},
     window::{Event, Key},
 };
-use ui::renderer::get_text;
+use ui::renderer::{get_text, draw_unit};
 
 mod ui;
 
@@ -32,8 +31,7 @@ fn main() {
         window.clear(Color::BLACK);
 
         for ele in game.get_all_units() {
-            let drawable = get_drawable(ele.body, ele.pos.clone().into());
-            window.draw(&drawable);
+            draw_unit(&mut window, ele);
             // not working yet. why?
             let label = get_text(&ele.name, ele.pos.clone().into());
             window.draw(&label);

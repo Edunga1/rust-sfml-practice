@@ -1,17 +1,17 @@
-use sfml::graphics::{Color, RectangleShape, Shape, Transformable};
+use game::unit::unit::Unit;
+use sfml::graphics::{Color, RectangleShape, Shape, Transformable, Texture, RenderWindow, RenderTarget};
 
-pub fn get_drawable(body: u32, pos: (i32, i32)) -> RectangleShape<'static> {
-    let _ = body;
+pub fn draw_unit(window: &mut RenderWindow, unit: &Unit) {
     let (x, y) = {
-        let (x, y) = pos;
+        let (x, y) = unit.pos.clone().into();
         (x as f32 * 50., y as f32 * 50.)
     };
+    let texture = Texture::from_file("src/resource/char-default.png").unwrap();
     let mut rect = RectangleShape::with_size((50., 50.).into());
-    rect.set_fill_color(Color::RED);
-    rect.set_outline_color(Color::GREEN);
+    rect.set_texture(&texture, true);
     rect.set_outline_thickness(3.);
     rect.set_position((x, y));
-    rect
+    window.draw(&rect)
 }
 
 pub fn get_text(text: &str, pos: (i32, i32)) -> sfml::graphics::Text {
