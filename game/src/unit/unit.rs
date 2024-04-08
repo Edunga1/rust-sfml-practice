@@ -30,7 +30,7 @@ impl Default for Unit {
             body: 1,
             direction: Direction::Right,
             boundary: None,
-            movement_counter: TickCounter::new(10),
+            movement_counter: TickCounter::new(100),
         }
     }
 }
