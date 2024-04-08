@@ -1,15 +1,16 @@
-use game::game::GameEvent;
+use game::game::{GameEvent, Game};
 use sfml::{
     graphics::{Color, RenderTarget},
     window::{Event, Key},
 };
-use ui::renderer::{get_text, draw_unit};
+use ui::{renderer::{get_text, Renderer}, window::create_window};
 
 mod ui;
 
 fn main() {
-    let mut window = ui::window::create_window();
-    let mut game = game::game::Game::new();
+    let mut window = create_window();
+    let mut game = Game::new();
+    let renderer = Renderer::new();
 
     while window.is_open() {
         while let Some(event) = window.poll_event() {
@@ -31,7 +32,7 @@ fn main() {
         window.clear(Color::BLACK);
 
         for ele in game.get_all_units() {
-            draw_unit(&mut window, ele);
+            renderer.draw_unit(&mut window, ele);
             // not working yet. why?
             let label = get_text(&ele.name, ele.pos.clone().into());
             window.draw(&label);
