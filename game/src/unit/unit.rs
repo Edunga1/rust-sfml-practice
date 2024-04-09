@@ -2,6 +2,7 @@ use crate::tick::counter::TickCounter;
 
 use super::{position::Position, vector::Vector2d};
 
+#[derive(PartialEq, Clone)]
 pub enum Direction {
     Left,
     Right,
@@ -41,6 +42,11 @@ impl Moveable for Unit {
             return;
         }
 
+        if direction != &self.direction && matches!(direction, Direction::Left | Direction::Right) {
+            self.direction = direction.clone();
+            return;
+        }
+
         let vector = Unit::direction_to_vector(direction);
         if self.boundary.is_none() {
             self.pos.move_(vector);
@@ -53,12 +59,6 @@ impl Moveable for Unit {
             (x.clamp(0, mx), y.clamp(0, my))
         };
         self.pos = Position::new(x, y);
-
-        match direction {
-            Direction::Left => self.direction = Direction::Left,
-            Direction::Right => self.direction = Direction::Right,
-            _ => {},
-        }
     }
 }
 
