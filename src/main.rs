@@ -31,7 +31,7 @@ fn main() {
         game.tick();
         window.clear(Color::BLACK);
 
-        for ele in game.get_all_units() {
+        for ele in game.units() {
             renderer.draw_unit(&mut window, ele);
             // not working yet. why?
             let label = get_text(&ele.name, ele.pos.clone().into());

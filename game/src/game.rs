@@ -75,16 +75,8 @@ impl Game {
         self.playable.tick();
     }
 
-    pub fn get_all_units(&self) -> Vec<&Unit> {
-        let mut units = vec![];
-        units.push(&self.playable);
-        let mut creatures = self
-            .creatures
-            .iter()
-            .map(|c| c.get_unit())
-            .collect::<Vec<&Unit>>();
-        units.append(&mut creatures);
-        units
+    pub fn units(&self) -> UnitsIter {
+        UnitsIter::new(self)
     }
 
     fn move_playable(&mut self) {
@@ -93,5 +85,40 @@ impl Game {
         } else {
             return;
         }
+    }
+}
+
+pub struct UnitsIter<'a> {
+    game: &'a Game,
+    index: usize,
+    player_vsited: bool,
+}
+
+impl UnitsIter<'_> {
+    pub fn new(game: &Game) -> UnitsIter {
+        UnitsIter {
+            game,
+            index: 0,
+            player_vsited: false,
+        }
+    }
+}
+
+impl<'a> Iterator for UnitsIter<'a> {
+    type Item = &'a Unit;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if !self.player_vsited {
+            self.player_vsited = true;
+            return Option::Some(&self.game.playable);
+        }
+
+        if self.index < self.game.creatures.len() {
+            let unit = self.game.creatures.get(self.index).unwrap().get_unit();
+            self.index += 1;
+            return Option::Some(unit);
+        }
+
+        Option::None
     }
 }
