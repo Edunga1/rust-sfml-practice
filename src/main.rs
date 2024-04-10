@@ -3,7 +3,7 @@ use sfml::{
     graphics::{Color, RenderTarget},
     window::{Event, Key},
 };
-use ui::{renderer::{get_text, Renderer}, window::create_window};
+use ui::{renderer::Renderer, window::create_window};
 
 mod ui;
 
@@ -33,9 +33,6 @@ fn main() {
 
         for ele in game.units() {
             renderer.draw_unit(&mut window, ele);
-            // not working yet. why?
-            let label = get_text(&ele.name, ele.pos.clone().into());
-            window.draw(&label);
         }
 
         window.display();
