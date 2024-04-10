@@ -21,6 +21,17 @@ impl Renderer {
     }
 
     pub fn draw_unit(&self, window: &mut RenderWindow, unit: &Unit) {
+        self.draw_body(window, unit);
+    }
+
+    fn get_texture(&self, id: u32) -> &Texture {
+        if self.body_texture.contains_key(&id) {
+            return self.body_texture.get(&id).unwrap();
+        }
+        self.body_texture.get(&Self::DEFAULT_BODY).unwrap()
+    }
+
+    fn draw_body(&self, window: &mut RenderWindow, unit: &Unit) {
         let (mut x, y) = {
             let (x, y) = unit.pos.clone().into();
             (x as f32 * SIZE.0, y as f32 * SIZE.1)
@@ -40,13 +51,6 @@ impl Renderer {
 
         rect.set_position((x, y));
         window.draw(&rect);
-    }
-
-    fn get_texture(&self, id: u32) -> &Texture {
-        if self.body_texture.contains_key(&id) {
-            return self.body_texture.get(&id).unwrap();
-        }
-        self.body_texture.get(&Self::DEFAULT_BODY).unwrap()
     }
 }
 
