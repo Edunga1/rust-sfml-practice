@@ -1,5 +1,6 @@
 use super::vector::Vector2d;
 
+#[derive(PartialEq, Debug)]
 pub struct Position {
     pub vector: Vector2d,
 }

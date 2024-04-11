@@ -86,3 +86,17 @@ impl Unit {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_move_when_cooling_down() {
+        let mut unit = Unit::new();
+        unit.pos = Position::new(0, 0);
+        unit.direction = Direction::Left;
+        unit.move_(&Direction::Left);
+        assert_eq!(unit.pos, Position::new(0, 0));
+    }
+}
