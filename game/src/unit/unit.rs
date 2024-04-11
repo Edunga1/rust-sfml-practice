@@ -92,7 +92,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_move_when_cooling_down() {
+    fn test_move_when_not_ready() {
         let mut unit = Unit::new();
         unit.pos = Position::new(0, 0);
         unit.direction = Direction::Left;
@@ -115,7 +115,7 @@ mod tests {
     }
 
     #[test]
-    fn test_move_when_opposite_direction() {
+    fn test_move_opposite_direction() {
         let mut unit = Unit::new();
         unit.pos = Position::new(0, 0);
         unit.direction = Direction::Left;
