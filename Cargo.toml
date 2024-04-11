@@ -1,4 +1,8 @@
-workspace = { members = ["game"] }
+[workspace]
+members = [
+  ".",
+  "game",
+]
 
 [package]
 name = "sfml-rust-start"
