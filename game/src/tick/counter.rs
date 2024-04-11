@@ -4,8 +4,8 @@ pub(crate) struct TickCounter {
 }
 
 impl TickCounter {
-    pub fn new(cooldown: i32) -> TickCounter {
-        TickCounter { tick: 0, cooldown }
+    pub fn new(tick: i32, cooldown: i32) -> TickCounter {
+        TickCounter { tick, cooldown }
     }
 
     pub fn tick(&mut self) {
@@ -25,5 +25,17 @@ impl TickCounter {
 
     fn ready(&self) -> bool {
         self.tick >= self.cooldown
+    }
+}
+
+impl From<i32> for TickCounter {
+    fn from(cooldown: i32) -> TickCounter {
+        TickCounter::new(0, cooldown)
+    }
+}
+
+impl From<(i32, i32)> for TickCounter {
+    fn from(tuple: (i32, i32)) -> TickCounter {
+        TickCounter::new(tuple.0, tuple.1)
     }
 }

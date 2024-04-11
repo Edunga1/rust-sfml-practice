@@ -31,7 +31,7 @@ impl Default for Unit {
             body: 1,
             direction: Direction::Right,
             boundary: None,
-            movement_counter: TickCounter::new(100),
+            movement_counter: (0, 100).into(),
         }
     }
 }
@@ -96,7 +96,33 @@ mod tests {
         let mut unit = Unit::new();
         unit.pos = Position::new(0, 0);
         unit.direction = Direction::Left;
+
         unit.move_(&Direction::Left);
+
+        assert_eq!(unit.pos, Position::new(0, 0));
+    }
+
+    #[test]
+    fn test_move_when_ready() {
+        let mut unit = Unit::new();
+        unit.pos = Position::new(0, 0);
+        unit.direction = Direction::Left;
+        unit.movement_counter = (1, 1).into();
+
+        unit.move_(&Direction::Left);
+
+        assert_eq!(unit.pos, Position::new(-1, 0));
+    }
+
+    #[test]
+    fn test_move_when_opposite_direction() {
+        let mut unit = Unit::new();
+        unit.pos = Position::new(0, 0);
+        unit.direction = Direction::Left;
+        unit.movement_counter = (1, 1).into();
+
+        unit.move_(&Direction::Right);
+
         assert_eq!(unit.pos, Position::new(0, 0));
     }
 }
