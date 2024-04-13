@@ -13,4 +13,4 @@ edition = "2021"
 
 [dependencies]
 game = { path = "game" }
-sfml = "0.20.0"
+sfml = "0.21.0"
