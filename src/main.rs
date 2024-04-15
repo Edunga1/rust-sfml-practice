@@ -11,6 +11,9 @@ fn main() {
     let mut window = create_window();
     let mut game = Game::new();
     let renderer = Renderer::new();
+    let time_per_frame = sfml::system::Time::seconds(1.0 / 60.0);
+    let mut clock = sfml::system::Clock::start();
+    let mut time_since_last_tick = sfml::system::Time::seconds(0.0);
 
     while window.is_open() {
         while let Some(event) = window.poll_event() {
@@ -28,7 +31,12 @@ fn main() {
             }
         }
 
-        game.tick();
+        time_since_last_tick += clock.restart();
+        while time_since_last_tick >= time_per_frame {
+            time_since_last_tick -= time_per_frame;
+            game.tick();
+        }
+
         window.clear(Color::BLACK);
 
         for ele in game.units() {
