@@ -40,7 +40,7 @@ fn main() {
         window.clear(Color::BLACK);
 
         for ele in game.units() {
-            renderer.draw_unit(&mut window, ele);
+            renderer.draw_unit(&mut window, ele, &game.playable)
         }
 
         window.display();

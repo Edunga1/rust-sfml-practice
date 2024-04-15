@@ -1,3 +1,5 @@
+use std::ops;
+
 use super::vector::Vector2d;
 
 #[derive(PartialEq, Debug)]
@@ -28,5 +30,15 @@ impl Position {
 impl From<Position> for (i32, i32) {
     fn from(pos: Position) -> (i32, i32) {
         (pos.vector.x, pos.vector.y)
+    }
+}
+
+impl ops::Sub<Position> for Position {
+    type Output = Position;
+
+    fn sub(self, rhs: Position) -> Position {
+        Position {
+            vector: self.vector.clone().add(rhs.vector.clone().mul(-1)),
+        }
     }
 }
