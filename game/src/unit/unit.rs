@@ -31,7 +31,7 @@ impl Default for Unit {
             body: 1,
             direction: Direction::Right,
             boundary: None,
-            movement_counter: (0, 100).into(),
+            movement_counter: (0, 20).into(),
         }
     }
 }
