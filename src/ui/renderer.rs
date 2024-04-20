@@ -1,4 +1,4 @@
-use game::unit::unit::{Direction, Unit};
+use game::{unit::unit::{Direction, Unit}, game::MessageReceiver};
 use sfml::{
     graphics::{Color, RectangleShape, RenderTarget, RenderWindow, Shape, Texture, Transformable},
     SfBox,
@@ -8,8 +8,15 @@ use std::collections::HashMap;
 const SIZE: (f32, f32) = (50., 50.);
 
 pub struct Renderer {
+    journal: Vec<String>,
     body_texture: HashMap<u32, SfBox<Texture>>,
     font: SfBox<sfml::graphics::Font>,
+}
+
+impl MessageReceiver for Renderer {
+    fn notify(&mut self, message: &str) {
+        self.journal.push(message.to_string());
+    }
 }
 
 impl Renderer {
@@ -22,12 +29,26 @@ impl Renderer {
             Texture::from_file("src/resource/char-default.png").unwrap(),
         );
         let font = sfml::graphics::Font::from_file("src/resource/font.ttf").unwrap();
-        Self { body_texture: map, font }
+        let journal = vec![];
+        Self { body_texture: map, font, journal }
     }
 
     pub fn draw_unit(&self, window: &mut RenderWindow, unit: &Unit, protagonist: &Unit) {
         self.draw_body(window, unit, protagonist);
         self.draw_name(window, unit, protagonist);
+    }
+
+    pub fn draw_messages(&self, window: &mut RenderWindow) {
+        let mut text = sfml::graphics::Text::default();
+        text.set_font(&self.font);
+        text.set_character_size(10);
+        text.set_fill_color(Color::WHITE);
+        text.set_position((0., 0.));
+        for (i, message) in self.journal.iter().enumerate() {
+            text.set_string(message);
+            text.set_position((0., i as f32 * 10.));
+            window.draw(&text);
+        }
     }
 
     fn get_texture(&self, id: u32) -> &Texture {

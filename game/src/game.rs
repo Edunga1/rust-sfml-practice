@@ -1,3 +1,5 @@
+use std::{cell::RefCell, rc::Rc};
+
 use crate::unit::creature::{Creature, Squirrel};
 
 use super::unit::unit::{Direction, Moveable, Unit};
@@ -11,14 +13,24 @@ pub trait GameEvent {
     fn stop(&mut self);
 }
 
-pub struct Game {
+pub trait MessageReceiver {
+    fn notify(&mut self, message: &str);
+}
+
+pub trait MessageNotifier<'a> {
+    fn subscribe(&mut self, receiver: Rc<RefCell<dyn MessageReceiver + 'a>>);
+    fn send(&mut self, message: &str);
+}
+
+pub struct Game<'a> {
     pub serial: Option<u32>, // unused yet
     pub playable: Unit,
     pub creatures: Vec<Box<dyn Creature>>,
     playable_direction: Option<Direction>,
+    receivers: Vec<Rc<RefCell<dyn MessageReceiver + 'a>>>,
 }
 
-impl Default for Game {
+impl Default for Game<'_> {
     fn default() -> Self {
         let player = {
             let mut unit = Unit::new();
@@ -30,11 +42,12 @@ impl Default for Game {
             playable: player,
             creatures: vec![],
             playable_direction: Option::None,
+            receivers: vec![],
         }
     }
 }
 
-impl GameEvent for Game {
+impl GameEvent for Game<'_> {
     fn move_left(&mut self) {
         self.playable_direction = Option::Some(Direction::Left);
     }
@@ -56,8 +69,20 @@ impl GameEvent for Game {
     }
 }
 
-impl Game {
-    pub fn new() -> Game {
+impl<'a> MessageNotifier<'a> for Game<'a> {
+    fn subscribe(&mut self, receiver: Rc<RefCell<dyn MessageReceiver + 'a>>) {
+        self.receivers.push(receiver);
+    }
+
+    fn send(&mut self, message: &str) {
+        for receiver in &self.receivers{
+            receiver.borrow_mut().notify(message);
+        }
+    }
+}
+
+impl Game<'_> {
+    pub fn new() -> Game<'static> {
         let mut game = Game {
             ..Default::default()
         };
@@ -75,50 +100,21 @@ impl Game {
         self.playable.tick();
     }
 
-    pub fn units(&self) -> UnitsIter {
-        UnitsIter::new(self)
+    pub fn units(&self) -> Vec<&Unit> {
+        let mut units = vec![&self.playable];
+        for creature in &self.creatures {
+            units.push(&creature.get_unit());
+        }
+        units
     }
 
     fn move_playable(&mut self) {
         if let Some(ref direction) = self.playable_direction {
-            self.playable.move_(direction);
+            if self.playable.move_(direction) {
+                self.send("player moved");
+            }
         } else {
             return;
         }
-    }
-}
-
-pub struct UnitsIter<'a> {
-    game: &'a Game,
-    index: usize,
-    player_vsited: bool,
-}
-
-impl UnitsIter<'_> {
-    pub fn new(game: &Game) -> UnitsIter {
-        UnitsIter {
-            game,
-            index: 0,
-            player_vsited: false,
-        }
-    }
-}
-
-impl<'a> Iterator for UnitsIter<'a> {
-    type Item = &'a Unit;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        if !self.player_vsited {
-            self.player_vsited = true;
-            return Option::Some(&self.game.playable);
-        }
-
-        if self.index < self.game.creatures.len() {
-            let unit = self.game.creatures.get(self.index).unwrap().get_unit();
-            self.index += 1;
-            return Option::Some(unit);
-        }
-
-        Option::None
     }
 }

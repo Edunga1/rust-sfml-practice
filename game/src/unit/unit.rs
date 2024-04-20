@@ -11,7 +11,7 @@ pub enum Direction {
 }
 
 pub trait Moveable {
-    fn move_(&mut self, direction: &Direction);
+    fn move_(&mut self, direction: &Direction) -> bool;
 }
 
 pub struct Unit {
@@ -37,20 +37,20 @@ impl Default for Unit {
 }
 
 impl Moveable for Unit {
-    fn move_(&mut self, direction: &Direction) {
+    fn move_(&mut self, direction: &Direction) -> bool {
         if !self.movement_counter.reset() {
-            return;
+            return false;
         }
 
         if direction != &self.direction && matches!(direction, Direction::Left | Direction::Right) {
             self.direction = direction.clone();
-            return;
+            return true;
         }
 
         let vector = Unit::direction_to_vector(direction);
         if self.boundary.is_none() {
             self.pos.move_(vector);
-            return;
+            return true;
         }
 
         let (x, y) = {
@@ -59,6 +59,7 @@ impl Moveable for Unit {
             (x.clamp(0, mx), y.clamp(0, my))
         };
         self.pos = Position::new(x, y);
+        true
     }
 }
 

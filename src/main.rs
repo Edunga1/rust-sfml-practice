@@ -1,4 +1,6 @@
-use game::game::{GameEvent, Game};
+use std::{cell::RefCell, rc::Rc};
+
+use game::game::{GameEvent, Game, MessageNotifier};
 use sfml::{
     graphics::{Color, RenderTarget},
     window::{Event, Key},
@@ -10,10 +12,12 @@ mod ui;
 fn main() {
     let mut window = create_window();
     let mut game = Game::new();
-    let renderer = Renderer::new();
+    let renderer = Rc::new(RefCell::new(Renderer::new()));
     let time_per_frame = sfml::system::Time::seconds(1.0 / 60.0);
     let mut clock = sfml::system::Clock::start();
     let mut time_since_last_tick = sfml::system::Time::seconds(0.0);
+
+    game.subscribe(renderer.clone());
 
     while window.is_open() {
         while let Some(event) = window.poll_event() {
@@ -40,7 +44,8 @@ fn main() {
         window.clear(Color::BLACK);
 
         for ele in game.units() {
-            renderer.draw_unit(&mut window, ele, &game.playable)
+            renderer.borrow_mut().draw_unit(&mut window, ele, &game.playable);
+            renderer.borrow().draw_messages(&mut window);
         }
 
         window.display();
