@@ -6,6 +6,7 @@ use sfml::{
 use std::collections::HashMap;
 
 const SIZE: (f32, f32) = (50., 50.);
+const MAX_JOURNAL_MESSAGES: usize = 5;
 
 pub struct Renderer {
     journal: Vec<String>,
@@ -38,16 +39,19 @@ impl Renderer {
         self.draw_name(window, unit, protagonist);
     }
 
-    pub fn draw_messages(&self, window: &mut RenderWindow) {
+    pub fn draw_journal(&self, window: &mut RenderWindow) {
         let mut text = sfml::graphics::Text::default();
         text.set_font(&self.font);
         text.set_character_size(10);
         text.set_fill_color(Color::WHITE);
         text.set_position((0., 0.));
-        for (i, message) in self.journal.iter().enumerate() {
+        let mut journal = self.journal.iter().rev().take(MAX_JOURNAL_MESSAGES);
+        let mut y = 0.;
+        while let Some(message) = journal.next() {
             text.set_string(message);
-            text.set_position((0., i as f32 * 10.));
+            text.set_position((0., y));
             window.draw(&text);
+            y += 10.;
         }
     }
 

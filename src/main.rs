@@ -45,7 +45,7 @@ fn main() {
 
         for ele in game.units() {
             renderer.borrow_mut().draw_unit(&mut window, ele, &game.playable);
-            renderer.borrow().draw_messages(&mut window);
+            renderer.borrow().draw_journal(&mut window);
         }
 
         window.display();
