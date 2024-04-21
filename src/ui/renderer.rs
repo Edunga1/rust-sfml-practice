@@ -102,8 +102,8 @@ impl Renderer {
             (size.x as f32 / 2., size.y as f32 / 2.)
         };
         let (x, y) = (unit.pos.clone() - protagonist.pos.clone()).into();
-        let x = (x as f32 * SIZE.0) + sx;
-        let y = (y as f32 * SIZE.1) + sy;
+        let x = (x as f32 * SIZE.0) + sx - SIZE.0 / 2.;
+        let y = (y as f32 * SIZE.1) + sy - SIZE.1 / 2.;
         (x, y)
     }
 
