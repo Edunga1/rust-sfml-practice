@@ -1,6 +1,10 @@
-use game::{unit::unit::{Direction, Unit}, game::MessageReceiver};
+use game::{
+    game::MessageReceiver,
+    unit::unit::{Direction, Unit},
+};
 use sfml::{
     graphics::{Color, RectangleShape, RenderTarget, RenderWindow, Shape, Texture, Transformable},
+    system::Vector2u,
     SfBox,
 };
 use std::collections::HashMap;
@@ -31,7 +35,11 @@ impl Renderer {
         );
         let font = sfml::graphics::Font::from_file("src/resource/font.ttf").unwrap();
         let journal = vec![];
-        Self { body_texture: map, font, journal }
+        Self {
+            body_texture: map,
+            font,
+            journal,
+        }
     }
 
     pub fn draw_unit(&self, window: &mut RenderWindow, unit: &Unit, protagonist: &Unit) {
@@ -96,10 +104,15 @@ impl Renderer {
         window.draw(&text);
     }
 
-    fn calc_position(&self, window: &mut RenderWindow, unit: &Unit, protagonist: &Unit) -> (f32, f32) {
+    fn calc_position(
+        &self,
+        window: &mut RenderWindow,
+        unit: &Unit,
+        protagonist: &Unit,
+    ) -> (f32, f32) {
         let (sx, sy) = {
-            let size = window.size();
-            (size.x as f32 / 2., size.y as f32 / 2.)
+            let (x, y) = Vector(window.size()).into();
+            (x / 2., y / 2.)
         };
         let (x, y) = (unit.pos.clone() - protagonist.pos.clone()).into();
         let x = (x as f32 * SIZE.0) + sx - SIZE.0 / 2.;
@@ -108,10 +121,7 @@ impl Renderer {
     }
 
     fn draw_grid(&self, window: &mut RenderWindow) {
-        let (w, h) = {
-            let size = window.size();
-            (size.x as f32, size.y as f32)
-        };
+        let (w, h) = Vector(window.size()).into();
         let (sx, sy) = (w / 2., h / 2.);
         let mut line = RectangleShape::with_size((1., h).into());
         line.set_fill_color(Color::rgba(255, 255, 255, 2));
@@ -120,5 +130,24 @@ impl Renderer {
         line.set_size((w, 1.));
         line.set_position((0., sy));
         window.draw(&line);
+    }
+}
+
+struct Vector(Vector2u);
+impl From<Vector> for (f32, f32) {
+    fn from(v: Vector) -> Self {
+        (v.0.x as f32, v.0.y as f32)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_vector_into_tuple() {
+        let v = Vector(Vector2u { x: 1, y: 2 });
+        let t: (f32, f32) = v.into();
+        assert_eq!(t, (1., 2.));
     }
 }
