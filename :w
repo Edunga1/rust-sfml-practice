@@ -107,6 +107,7 @@ impl Renderer {
         (x, y)
     }
 
+    // draw just cross center lines
     fn draw_grid(&self, window: &mut RenderWindow) {
         let (w, h) = {
             let size = window.size();
@@ -114,10 +115,10 @@ impl Renderer {
         };
         let (sx, sy) = (w / 2., h / 2.);
         let mut line = RectangleShape::with_size((1., h).into());
-        line.set_fill_color(Color::rgba(255, 255, 255, 2));
+        line.set_fill_color(Color::rgba(255, 255, 255, 50));
         line.set_position((sx, 0.));
         window.draw(&line);
-        line.set_size((w, 1.));
+        line.set_size((1., SIZE.1));
         line.set_position((0., sy));
         window.draw(&line);
     }
