@@ -21,6 +21,7 @@ pub struct Unit {
     pub direction: Direction,
     boundary: Option<(i32, i32)>,
     movement_counter: TickCounter,
+    attack_counter: TickCounter,
 }
 
 impl Default for Unit {
@@ -32,6 +33,7 @@ impl Default for Unit {
             direction: Direction::Right,
             boundary: None,
             movement_counter: (0, 20).into(),
+            attack_counter: (0, 100).into(),
         }
     }
 }
@@ -72,10 +74,18 @@ impl Unit {
 
     pub fn tick(&mut self) {
         self.movement_counter.tick();
+        self.attack_counter.tick()
     }
 
     pub fn set_boundary(&mut self, boundary: (i32, i32)) {
         self.boundary = Some(boundary);
+    }
+
+    pub(crate) fn attack(&mut self) -> bool {
+        if !self.attack_counter.reset() {
+            return false;
+        }
+        return true;
     }
 
     fn direction_to_vector(direction: &Direction) -> Vector2d {

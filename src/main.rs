@@ -31,6 +31,8 @@ fn main() {
                 | Event::KeyReleased { code: Key::Right, .. }
                 | Event::KeyReleased { code: Key::Up, .. }
                 | Event::KeyReleased { code: Key::Down, .. } => game.stop(),
+                Event::KeyPressed { code: Key::Space, .. }
+                | Event::KeyPressed { code: Key::A, ..} => game.attack(),
                 _ => {}
             }
         }

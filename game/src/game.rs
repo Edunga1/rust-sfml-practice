@@ -117,4 +117,10 @@ impl Game<'_> {
             return;
         }
     }
+
+    pub fn attack(&mut self) {
+        if self.playable.attack() {
+            self.send("player attacked");
+        }
+    }
 }
