@@ -23,6 +23,10 @@ impl TickCounter {
         false
     }
 
+    pub fn force_reset(&mut self) {
+        self.tick = 0;
+    }
+
     fn ready(&self) -> bool {
         self.tick >= self.cooldown
     }
