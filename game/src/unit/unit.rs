@@ -109,8 +109,9 @@ mod tests {
         unit.pos = Position::new(0, 0);
         unit.direction = Direction::Left;
 
-        unit.move_(&Direction::Left);
+        let result = unit.move_(&Direction::Left);
 
+        assert_eq!(result, false);
         assert_eq!(unit.pos, Position::new(0, 0));
     }
 
@@ -121,8 +122,11 @@ mod tests {
         unit.direction = Direction::Left;
         unit.movement_counter = (1, 1).into();
 
-        unit.move_(&Direction::Left);
+        let result1 = unit.move_(&Direction::Left);
+        let result2 = unit.move_(&Direction::Left);
 
+        assert_eq!(result1, true);
+        assert_eq!(result2, false);
         assert_eq!(unit.pos, Position::new(-1, 0));
     }
 
@@ -133,8 +137,24 @@ mod tests {
         unit.direction = Direction::Left;
         unit.movement_counter = (1, 1).into();
 
-        unit.move_(&Direction::Right);
+        let result = unit.move_(&Direction::Right);
 
+        assert_eq!(result, true);
         assert_eq!(unit.pos, Position::new(0, 0));
+    }
+
+    #[test]
+    fn test_attack_reset_movement_counter() {
+        let mut unit = Unit::new();
+        unit.pos = Position::new(0, 0);
+        unit.direction = Direction::Left;
+        unit.movement_counter = (1, 1).into();
+        unit.attack_counter = (1, 1).into();
+
+        let attack_result = unit.attack();
+        let move_result = unit.move_(&Direction::Left);
+
+        assert_eq!(attack_result, true);
+        assert_eq!(move_result, false);
     }
 }

@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub(crate) struct TickCounter {
     tick: i32,
     cooldown: i32,
