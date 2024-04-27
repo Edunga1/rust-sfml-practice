@@ -83,9 +83,9 @@ impl Unit {
 
     pub(crate) fn attack(&mut self) -> bool {
         if !self.attack_counter.reset() {
-            self.movement_counter.force_reset();
             return false;
         }
+        self.movement_counter.force_reset();
         return true;
     }
 
