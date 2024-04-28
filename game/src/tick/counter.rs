@@ -44,3 +44,44 @@ impl From<(i32, i32)> for TickCounter {
         TickCounter::new(tuple.0, tuple.1)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_tick() {
+        let mut counter = TickCounter::new(0, 1);
+        counter.tick();
+        assert_eq!(counter.tick, 1);
+    }
+
+    #[test]
+    fn test_reset() {
+        let mut counter = TickCounter::new(1, 1);
+        let result = counter.reset();
+        assert_eq!(result, true);
+        assert_eq!(counter.tick, 0);
+    }
+
+    #[test]
+    fn test_force_reset() {
+        let mut counter = TickCounter::new(1, 1);
+        counter.force_reset();
+        assert_eq!(counter.tick, 0);
+    }
+
+    #[test]
+    fn test_ready() {
+        let counter = TickCounter::new(1, 1);
+        let result = counter.ready();
+        assert_eq!(result, true);
+    }
+
+    #[test]
+    fn test_not_ready() {
+        let counter = TickCounter::new(0, 1);
+        let result = counter.ready();
+        assert_eq!(result, false);
+    }
+}
