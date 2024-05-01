@@ -108,16 +108,6 @@ impl Game<'_> {
         units
     }
 
-    fn move_playable(&mut self) {
-        if let Some(ref direction) = self.playable_direction {
-            if self.playable.move_(direction) {
-                self.send("player moved");
-            }
-        } else {
-            return;
-        }
-    }
-
     pub fn attack(&mut self) {
         if self.playable.attack() {
             self.send("player attacked");
@@ -128,5 +118,15 @@ impl Game<'_> {
         let mut squirrel = Squirrel::new();
         squirrel.unit.pos.move_((x, y).into());
         self.creatures.push(Box::new(squirrel));
+    }
+
+    fn move_playable(&mut self) {
+        if let Some(ref direction) = self.playable_direction {
+            if self.playable.move_(direction) {
+                self.send("player moved");
+            }
+        } else {
+            return;
+        }
     }
 }
