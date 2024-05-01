@@ -123,4 +123,10 @@ impl Game<'_> {
             self.send("player attacked");
         }
     }
+
+    pub fn add_unit(&mut self, x: i32, y: i32) {
+        let mut squirrel = Squirrel::new();
+        squirrel.unit.pos.move_((x, y).into());
+        self.creatures.push(Box::new(squirrel));
+    }
 }

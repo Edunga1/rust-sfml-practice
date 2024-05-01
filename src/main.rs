@@ -33,6 +33,9 @@ fn main() {
                 | Event::KeyReleased { code: Key::Down, .. } => game.stop(),
                 Event::KeyPressed { code: Key::Space, .. }
                 | Event::KeyPressed { code: Key::A, ..} => game.attack(),
+                Event::MouseButtonPressed { x, y, .. } => {
+                    game.add_unit((x - 400) / 50, (y - 300) / 50);
+                }
                 _ => {}
             }
         }
